@@ -1,5 +1,6 @@
 package com.customer.controller;
 
+import com.customer.ContactServiceFeignClient;
 import com.customer.model.Customer;
 import com.customer.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,14 @@ public class CustomerController {
 
     @Autowired
     RestTemplate restTemplate;
+    @Autowired
+    ContactServiceFeignClient contactServiceFeignClient;
 
     @GetMapping("/{customerId}")
     public Customer getCustomer(@PathVariable Long customerId){
 
-        var contacts = restTemplate.getForObject("http://contact-service/contact/customer/"+customerId, List.class);
+       // var contacts = restTemplate.getForObject("http://localhost:8999/contact/customer/"+customerId, List.class);
+        var contacts = contactServiceFeignClient.getContacts(customerId);
         var customer = customerService.getCustomer(customerId);
         customer.setContacts(contacts);
         return customer;
